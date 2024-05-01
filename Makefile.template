@@ -1,0 +1,36 @@
+# Copy this file into `Makefile` and add your options (see below section)
+
+# ========================================================================================== #
+# Set your own term and your own flags
+TERM=kitty
+
+# Generic flags. The last flag should be the one used to execute the given command (if any)
+TERM_FLAGS=--detach --hold
+
+# Flags specific for server or client. Here I simply rename the window.
+TERM_CFLAGS=--title client
+TERM_SFLAGS=--title server
+# ========================================================================================== #
+
+.PHONY : run-all run-server run-client build-all make-server make-client clean
+
+# Order is crucial, as the server must start before the client
+run-all:	run-server run-client	
+
+run-server:	make-server
+	$(TERM) $(TERM_SFLAGS) $(TERM_FLAGS) server/server
+
+run-client:	make-client
+	$(TERM) $(TERM_CFLAGS) $(TERM_FLAGS) client/client
+
+# Compile server and client using their respective Makefiles
+make-server:
+	make -C server
+
+make-client:
+	make -C client
+
+# Clean compilation files of both server and client
+clean:
+	make -C server clean
+	make -C client clean
